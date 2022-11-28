@@ -69,6 +69,23 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/advertise-products", async (req, res) => {
+      const result = await allCateShopEXCollection
+        .find({
+          advertise: true,
+          status: "available",
+        })
+        .toArray();
+      res.send(result);
+    });
+
+    app.get("/all-categories/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { productsId: parseInt(id) };
+      const result = await allCateShopEXCollection.find(filter).toArray();
+      res.send(result);
+    });
+
     app.get("/all-seller", async (req, res) => {
       const result = await userShopEXCollection
         .find({ position: "Seller" })
@@ -108,13 +125,6 @@ async function run() {
       const query = { email: email };
       const Products = await allCateShopEXCollection.find(query).toArray();
       res.send(Products);
-    });
-
-    app.get("/all-categories/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { productsId: parseInt(id) };
-      const result = await allCateShopEXCollection.find(filter).toArray();
-      res.send(result);
     });
 
     app.post("/users", async (req, res) => {
@@ -190,16 +200,6 @@ async function run() {
     app.post("/orders-products", async (req, res) => {
       const orders = req.body;
       const result = await ordersShopEXCollection.insertOne(orders);
-      res.send(result);
-    });
-
-    app.get("/advertise-products", async (req, res) => {
-      const result = await allCateShopEXCollection
-        .find({
-          advertise: true,
-          status: "available",
-        })
-        .toArray();
       res.send(result);
     });
 
