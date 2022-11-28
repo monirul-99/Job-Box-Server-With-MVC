@@ -252,7 +252,7 @@ async function run() {
       const email = req.params.email;
       const query = { email: email };
       const user = await userShopEXCollection.findOne(query);
-      res.send({ isAdmin: user?.verify === true });
+      res.send({ isVerifySeller: user?.verify === true });
     });
 
     app.put("/update/:id", async (req, res) => {
