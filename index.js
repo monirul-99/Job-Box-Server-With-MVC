@@ -3,7 +3,7 @@ const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 require("dotenv").config();
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 //middle Ware
@@ -16,6 +16,22 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+
+function verifyJWT(req, res, next) {
+  const authHeaders = req.headers.authorization;
+  if (!authHeaders) {
+    return res.status(401).send("Unauthorized Access! ");
+  }
+
+  const token = authHeaders.split(" ")[1];
+  jwt.verify(token, process.env.JWT_WEB_TOKEN, function (err, decoded) {
+    if (err) {
+      return res.status(403).send({ message: "Upper Forbidden Access!" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+}
 
 async function run() {
   try {
@@ -36,6 +52,17 @@ async function run() {
       .db("shopExDB")
       .collection("paymentsSuccessBuyers");
 
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await userShopEXCollection.findOne(query);
+      if (result) {
+        const token = jwt.sign({ email }, process.env.JWT_WEB_TOKEN);
+        return res.send({ accessToken: token });
+      }
+      res.status(403).send({ accessToken: "" });
+    });
+
     app.get("/categories-three-card", async (req, res) => {
       const query = {};
       const result = await categoriesShopEXCollection.find(query).toArray();
@@ -49,11 +76,26 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/all-buyers-get", async (req, res) => {
+      const result = await ordersShopEXCollection
+        .find({ paid: true })
+        .toArray();
+      res.send(result);
+    });
+
+    app.delete("/all-seller/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await userShopEXCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/all-categories", async (req, res) => {
       const query = {};
       const result = await allCateShopEXCollection.find(query).toArray();
       res.send(result);
     });
+
     app.get("/categories-search/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
@@ -84,7 +126,9 @@ async function run() {
     app.post("/create-payment-intent", async (req, res) => {
       const product = req.body;
       const price = product.price;
+      console.log(price);
       const amount = price * 100;
+      console.log(amount);
       const paymentIntent = await stripe.paymentIntents.create({
         currency: "usd",
         amount: amount,
@@ -112,13 +156,14 @@ async function run() {
       );
       res.send(result);
     });
+
     app.get("/get-users", async (req, res) => {
       const query = {};
       const result = await userShopEXCollection.find(query).toArray();
       res.send(result);
     });
 
-    app.get("/get-orders-products", async (req, res) => {
+    app.get("/get-orders-products", verifyJWT, async (req, res) => {
       const query = {};
       const result = await ordersShopEXCollection.find(query).toArray();
       res.send(result);
@@ -141,22 +186,52 @@ async function run() {
       const result = await reportShopEXCollection.find(query).toArray();
       res.send(result);
     });
+
     app.post("/orders-products", async (req, res) => {
       const orders = req.body;
       const result = await ordersShopEXCollection.insertOne(orders);
       res.send(result);
     });
 
-    app.get("/advertise-products/:email", async (req, res) => {
-      const email = req.params.email;
+    app.get("/advertise-products", async (req, res) => {
       const result = await allCateShopEXCollection
         .find({
-          email: email,
           advertise: true,
           status: "available",
         })
         .toArray();
       res.send(result);
+    });
+
+    app.get("/all-seller-verify", async (req, res) => {
+      const result = await userShopEXCollection
+        .find({ verify: true })
+        .toArray();
+      res.send(result);
+    });
+
+    app.put("/verify-update/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
+      const updateDoc = {
+        $set: {
+          verify: true,
+        },
+      };
+      const result = await userShopEXCollection.updateMany(
+        filter,
+        updateDoc,
+        option
+      );
+      res.send(result);
+    });
+
+    app.get("/verify-seller-check/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userShopEXCollection.findOne(query);
+      res.send({ isAdmin: user?.verify === true });
     });
 
     app.put("/update/:id", async (req, res) => {
@@ -244,22 +319,22 @@ async function run() {
     //     res.send(wishlistProduct)
     // })
 
-    app.get("/update", async (req, res) => {
-      const filter = {};
-      const option = { upsert: true };
-      const updateDoc = {
-        $set: {
-          email: "sohelmuhammad164@gmail.com",
-        },
-      };
-      const result = await allCateShopEXCollection.updateMany(
-        filter,
-        updateDoc,
-        option
-      );
+    // app.get("/update", async (req, res) => {
+    //   const filter = {};
+    //   const option = { upsert: true };
+    //   const updateDoc = {
+    //     $set: {
+    //       verify: false,
+    //     },
+    //   };
+    //   const result = await userShopEXCollection.updateMany(
+    //     filter,
+    //     updateDoc,
+    //     option
+    //   );
 
-      res.send(result);
-    });
+    //   res.send(result);
+    // });
   } finally {
   }
 }
