@@ -217,6 +217,20 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/orders-get-email/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const ordersProducts = await ordersShopEXCollection.find(query).toArray();
+      res.send(ordersProducts);
+    });
+
+    app.delete("/order-products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersShopEXCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.put("/verify-update/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
@@ -273,20 +287,6 @@ async function run() {
         option
       );
       res.send(result);
-    });
-
-    app.delete("/order-products/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await ordersShopEXCollection.deleteOne(query);
-      res.send(result);
-    });
-
-    app.get("/orders-get-email/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email: email };
-      const ordersProducts = await ordersShopEXCollection.find(query).toArray();
-      res.send(ordersProducts);
     });
 
     app.get("/my-products/admin/:email", async (req, res) => {
