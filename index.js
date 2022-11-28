@@ -107,6 +107,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/all-seller-verify", async (req, res) => {
+      const result = await userShopEXCollection
+        .find({ verify: true })
+        .toArray();
+      res.send(result);
+    });
+
     app.get("/all-categories", async (req, res) => {
       const query = {};
       const result = await allCateShopEXCollection.find(query).toArray();
@@ -200,13 +207,6 @@ async function run() {
     app.post("/orders-products", async (req, res) => {
       const orders = req.body;
       const result = await ordersShopEXCollection.insertOne(orders);
-      res.send(result);
-    });
-
-    app.get("/all-seller-verify", async (req, res) => {
-      const result = await userShopEXCollection
-        .find({ verify: true })
-        .toArray();
       res.send(result);
     });
 
