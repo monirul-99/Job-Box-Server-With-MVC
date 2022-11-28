@@ -127,6 +127,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/all-categories/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allCateShopEXCollection.deleteOne(query);
+      res.send(result);
+    });
+
     app.get("/my-products-email/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
@@ -272,13 +279,6 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await ordersShopEXCollection.deleteOne(query);
-      res.send(result);
-    });
-
-    app.delete("/all-categories/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allCateShopEXCollection.deleteOne(query);
       res.send(result);
     });
 
