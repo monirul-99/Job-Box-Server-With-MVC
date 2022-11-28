@@ -303,22 +303,6 @@ async function run() {
       res.send({ isSeller: user?.position === "Seller" });
     });
 
-    //   app.post('/orders-get-by-email', async (req, res) => {
-    //     const orders = req.body;
-    //     const query = {
-    //         email: orders.email,
-    //         productId: orders.productId
-    //     }
-    //     const alreadyWishlist = await wishlistsCollections.find(query).toArray();
-    //     if (alreadyWishlist.length) {
-    //         const message = Already wishlist This product ${wishlist.name};
-    //         return res.send({ acknowledged: false, message })
-    //     }
-
-    //     const wishlistProduct = await wishlistsCollections.insertOne(wishlist);
-    //     res.send(wishlistProduct)
-    // })
-
     // app.get("/update", async (req, res) => {
     //   const filter = {};
     //   const option = { upsert: true };
