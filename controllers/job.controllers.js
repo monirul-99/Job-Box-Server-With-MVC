@@ -4,18 +4,12 @@ const students = [
   { id: 3, name: "Unknown Islam" },
 ];
 
-module.exports.getProduct = (req, res, next) => {
-  //   res.download(__dirname + "/Certificate Of Web Developer.pdf");
-  //   res.redirect("/monirul");
-  const { limit, page } = req.query;
-  console.log(limit, page);
-  res.json(students.slice(0, limit));
+module.exports.getJob = (req, res, next) => {
+  res.json(students);
 };
 
-module.exports.productAdd = (req, res, next) => {
-  students.push(req.body);
-  console.log(req.query);
-  res.send(students);
+module.exports.jobAdd = (req, res, next) => {
+  const user = req.body;
 };
 
 module.exports.getProductDetails = (req, res, next) => {
@@ -37,13 +31,11 @@ module.exports.productsUpdate = (req, res, next) => {
   const newData = students.find((user) => user.id === Number(id));
   newData.id = id;
   newData.name = req.body.name;
-  console.log(students);
   res.send(newData);
 };
 
 module.exports.productDelete = (req, res, next) => {
   const { id } = req.params;
   const newData = students.filter((user) => user.id !== Number(id));
-  console.log(students);
   res.send(newData);
 };

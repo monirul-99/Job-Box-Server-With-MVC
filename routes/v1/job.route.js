@@ -1,5 +1,5 @@
 const express = require("express");
-const productControllers = require("../../controllers/product.controllers");
+const jobControllers = require("../../controllers/job.controllers");
 const limiter = require("../../middleware/limiter");
 const viewCount = require("../../middleware/viewCount");
 
@@ -21,7 +21,7 @@ router
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
    */
-  .get(productControllers.getProduct)
+  .get(jobControllers.getJob)
   /**
    * @api {post} /tools save a tool
    * @apiDescription Get all the tools
@@ -37,12 +37,12 @@ router
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
    */
-  .post(productControllers.productAdd);
+  .post(jobControllers.jobAdd);
 
 router
   .route("/:id/")
-  .get(viewCount, limiter, productControllers.getProductDetails)
-  .patch(productControllers.productsUpdate)
-  .delete(productControllers.productDelete);
+  .get(viewCount, limiter, jobControllers.getProductDetails)
+  .patch(jobControllers.productsUpdate)
+  .delete(jobControllers.productDelete);
 
 module.exports = router;

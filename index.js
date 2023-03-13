@@ -3,26 +3,18 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 const dbConnect = require("./utils/dbConnect");
-const productRouter = require("./routes/v1/product.route");
-const viewCount = require("./middleware/viewCount");
+const jobRouter = require("./routes/v1/job.route");
 const errorHandler = require("./middleware/errorHandler");
 //middle Ware
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
-app.set("view engine", "ejs");
-// app.use(viewCount);
 
 dbConnect();
-app.use("/api/v1/product", productRouter);
+app.use("/api/v1/job", jobRouter);
 
 app.get("/", (req, res) => {
-  // res.sendFile(__dirname + "/public/index.html");
-  res.render("home.ejs", {
-    user: {
-      name: "Monirul Islam",
-    },
-  });
+  res.send("Hello Job");
 });
 
 app.all("*", (req, res) => {
@@ -31,7 +23,7 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(5000, () => console.log("Shop EX CMD Running"));
+app.listen(5000, () => console.log("Job Box CMD Running"));
 
 process.on("unhandledRejection", (error) => {
   console.log(error.name, error.message);
