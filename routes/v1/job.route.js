@@ -39,6 +39,7 @@ router
    */
   .post(jobControllers.jobAdd);
 
+router.route("/:email").get(jobControllers.getJobByEmail);
 router
   .route("/:id/")
   .get(viewCount, limiter, jobControllers.getProductDetails)

@@ -2,16 +2,22 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
-const dbConnect = require("./utils/dbConnect");
 const jobRouter = require("./routes/v1/job.route");
 const errorHandler = require("./middleware/errorHandler");
+const { connectToServer } = require("./utils/dbConnect");
 //middle Ware
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-dbConnect();
-app.use("/api/v1/job", jobRouter);
+connectToServer((err) => {
+  if (!err) {
+    app.listen(5000, () => console.log("Job Box CMD Running"));
+  } else {
+    console.log(err);
+  }
+});
+app.use("/api/v1/user", jobRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Job");
@@ -22,8 +28,6 @@ app.all("*", (req, res) => {
 });
 
 app.use(errorHandler);
-
-app.listen(5000, () => console.log("Job Box CMD Running"));
 
 process.on("unhandledRejection", (error) => {
   console.log(error.name, error.message);
