@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const userRouter = require("./routes/v1/user.route");
 const jobRouter = require("./routes/v1/job.route");
 const errorHandler = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
@@ -17,7 +18,8 @@ connectToServer((err) => {
     console.log(err);
   }
 });
-app.use("/api/v1/user", jobRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/job", jobRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Job");

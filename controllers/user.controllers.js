@@ -6,23 +6,23 @@ const students = [
   { id: 3, name: "Unknown Islam" },
 ];
 
-module.exports.getJob = async (req, res, next) => {
+module.exports.getUser = async (req, res, next) => {
   try {
     const db = getDB();
-    const getUser = await db.collection("JobBoxUser").find({}).toArray();
-    res.status(200).json({ success: true, data: getUser });
+    const result = await db.collection("JobBoxUser").find({}).toArray();
+    res.status(200).json({ success: true, data: result });
   } catch (err) {
     next(err);
   }
 };
 
-module.exports.getJobByEmail = async (req, res, next) => {
+module.exports.getUserByEmail = async (req, res, next) => {
   try {
     const db = getDB();
     const email = req.params.email;
-    const getUser = await db.collection("JobBoxUser").findOne({ email });
-    if (getUser?.email) {
-      return res.json({ status: true, data: getUser });
+    const result = await db.collection("JobBoxUser").findOne({ email });
+    if (result?.email) {
+      return res.json({ status: true, data: result });
     }
     res.send({ status: false });
   } catch (err) {
@@ -30,7 +30,7 @@ module.exports.getJobByEmail = async (req, res, next) => {
   }
 };
 
-module.exports.jobAdd = async (req, res, next) => {
+module.exports.userAdd = async (req, res, next) => {
   try {
     const db = getDB();
     const tools = req.body;
