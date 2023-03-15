@@ -43,3 +43,26 @@ module.exports.jobAdd = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.applyPatchData = async (req, res, next) => {
+  try {
+    const db = getDB();
+    const userId = req.body.userId;
+    const jobId = req.body.jobId;
+    const email = req.body.email;
+    const filter = { _id: ObjectId(jobId) };
+    const updateDoc = {
+      $push: { applicants: { id: ObjectId(userId), email } },
+    };
+    const result = await db
+      .collection("JobBoxJob")
+      .updateOne(filter, updateDoc);
+    console.log(result);
+    if (result?.acknowledged) {
+      return res.json({ status: true, data: result });
+    }
+    res.send({ status: false });
+  } catch (err) {
+    next(err);
+  }
+};
