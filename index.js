@@ -5,6 +5,7 @@ require("dotenv").config();
 const userRouter = require("./routes/v1/user.route");
 const jobRouter = require("./routes/v1/job.route");
 const jobApplyRouter = require("./routes/v1/jobApply.route");
+const AskReplyRouter = require("./routes/v1/askReply.route");
 const errorHandler = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
 //middle Ware
@@ -22,6 +23,7 @@ connectToServer((err) => {
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/job", jobRouter);
 app.use("/api/v1/apply", jobApplyRouter);
+app.use("/api/v1/reply", AskReplyRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Job");
