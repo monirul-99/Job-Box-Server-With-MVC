@@ -5,7 +5,7 @@ module.exports.appliedJobByEmail = async (req, res, next) => {
   try {
     const db = getDB();
     const email = req.params.email;
-    const query = { applicants: { $elemMatch: { email: email } } };
+    const query = { applicants: { $elemMatch: { email: [email] } } };
     const cursor = db
       .collection("JobBoxJob")
       .find(query)
@@ -27,7 +27,6 @@ module.exports.jobQuestionReply = async (req, res, next) => {
     const jobId = req.body.jobId;
     const email = req.body.email;
     const question = req.body.question;
-    console.log(userId, jobId, email);
 
     const filter = { _id: ObjectId(jobId) };
     const updateDoc = {
